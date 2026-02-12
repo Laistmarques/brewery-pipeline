@@ -143,10 +143,11 @@ Passos:
 A DAG foi configurada com:
 
 - Execução diária
-- 3 retries automáticos em caso de falha
+- 2 retries automáticos em caso de falha
 - Retry delay de 5 minutos
 - Timeout por task
 - Separação clara de etapas: Bronze → Silver → Gold
+- Timeout de 30min 
 
 Tratamento implementado:
 - Controle de erros HTTP (429 / 5xx)

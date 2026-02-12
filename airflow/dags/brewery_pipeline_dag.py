@@ -19,7 +19,8 @@ DEFAULT_ARGS = {
     "retry_delay": timedelta(minutes=5),
     "retries": 2,
     "email_on_failure": True,
-    "email": ["lais.teles@hotmail.com"]
+    "email": ["lais.teles@hotmail.com"],
+    "execution_timeout": timedelta(minutes=30),
 }
 
 def run_stage(stage: str, execution_dt: str):
