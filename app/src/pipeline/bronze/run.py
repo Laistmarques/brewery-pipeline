@@ -37,12 +37,6 @@ def persist_bronze_data(
         ValueError: Caso a lista de dados esteja vazia.
     """
 
-    # if not raw_data:
-    #     raise ValueError("None data to persist. The raw_data list is empty.")
-    
-    # if BRONZE_FORMAT != "json":
-    #     raise ValueError(f"Unsupported BRONZE_FORMAT={BRONZE_FORMAT}. Expected 'json'.")
-
     output_dir = (
         Path(BRONZE_DIR)
         / BREWERIES_DATASET

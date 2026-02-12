@@ -67,6 +67,32 @@ pip install -r requirements.txt
 
 ## 🏗 Arquitetura
 
+```bash
+                 +----------------------+
+                 |  Open Brewery DB API |
+                 +----------+-----------+
+                            |
+                            v
++----------------------+  extract   +-------------------------------+
+| Airflow DAG (@daily) +----------->| Bronze (JSON raw)             |
+| retries + timeout    |            | partition: ingestion_date     |
++----------+-----------+            +---------------+---------------+
+           |                                           |
+           |                               gate: check bronze exists
+           v                                           v
++-------------------------------+          +-------------------------------+
+| Silver (Parquet curated)      |<---------+ ShortCircuit / validation     |
+| partition: date/country/state |          +-------------------------------+
++---------------+---------------+
+                |
+                v
++-------------------------------+
+| Gold (Parquet analytics)      |
+| count by type + location      |
+| partition: date/country       |
++-------------------------------+
+```
+
 O pipeline é dividido em três camadas:
 
 ### 🥉 Bronze --- Ingestão
