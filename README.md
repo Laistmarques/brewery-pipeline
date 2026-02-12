@@ -2,7 +2,7 @@
 
 ## 📌 Visão Geral
 
-Este projeto implementa um pipeline de dados seguindo a arquitetura
+Este projeto implementa uma pipeline de dados que segue a arquitetura
 **Medallion (Bronze → Silver → Gold)** utilizando **Python, PySpark,
 Apache Airflow e Docker**.
 

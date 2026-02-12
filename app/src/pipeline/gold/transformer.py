@@ -28,19 +28,19 @@ class BreweryGoldTransformer:
     """
 
     def transform(self, df: DataFrame) -> DataFrame:
-
-        logger.info("Starting Gold transformation (states ranking)")
+        
+        logger.info("Starting Gold transformation (breweries by type and location)")
 
         return (
             df
             .groupBy(
+                F.col("ingestion_date"),
                 F.col("brewery_type"),
                 F.col("country"),
                 F.col("state"),
                 F.col("city"),
             )
             .agg(
-                # Quantidade de cervejarias únicas por (date, country, state, brewery_type)
                 F.countDistinct("id").alias("num_breweries"),
                 F.countDistinct("city").alias("num_city"),
             )
