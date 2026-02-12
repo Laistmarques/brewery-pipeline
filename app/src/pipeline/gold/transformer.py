@@ -12,56 +12,37 @@ logger = get_logger(__name__)
 class BreweryGoldTransformer:
 
     """
-    Recebe os dados da camada Silver e gera um ranking dos estados com mais cervejarias por país e dia.
-    Regras de transformação:
-    - Agrega por estado, país e dia, contando o número de cervejarias, cidades e tipos de cervejarias
-    - Calcula o total de cervejarias por país e dia para calcular a porcentagem do total do país
-    - Gera um ranking dos estados por país e dia, mantendo apenas os TOP N (configurável) estados
-    """
+    Gold Layer (conforme case):
+    - Cria uma visão agregada com a quantidade de cervejarias por tipo e localização.
 
-    TOP_N: int = 5
+    Entrada esperada (Silver):
+    - ingestion_date, country, state, brewery_type, id (e possivelmente outras colunas)
+
+    Saída (Gold):
+    - ingestion_date
+    - country
+    - state
+    - brewery_type
+    - brewery_count (countDistinct(id))
+    - created_at_utc
+    """
 
     def transform(self, df: DataFrame) -> DataFrame:
         logger.info("Starting Gold transformation (states ranking)")
 
-        # Agrega por estado (por dia e país)
-        by_state = (
+        return (
             df
-            .groupBy("ingestion_date", "country", "state")
+            .groupBy(
+                col("brewery_type"),
+                col("country"),
+                col("state_province"),
+                col("city"),
+            )
             .agg(
-                F.countDistinct("id").alias("brewery_count"),
-                F.countDistinct("city").alias("city_count"),
-                F.countDistinct("brewery_type").alias("types_count")
+                # Quantidade de cervejarias únicas por (date, country, state, brewery_type)
+                F.countDistinct("id").alias("num_breweries"),
+                F.countDistinct("city").alias("num_city"),
             )
-        )
-
-        # Total por país/dia para % do país
-        country_total = (
-            by_state
-            .groupBy("ingestion_date", "country")
-            .agg(
-                F.sum("brewery_count").alias("country_brewery_total")
-            )
-        )
-
-        enriched = (
-            by_state
-            .join(country_total, ["ingestion_date", "country"], "left")
-            .withColumn("pct_country_total",
-                F.when(F.col("country_brewery_total") > 0,
-                       F.col("brewery_count") / F.col("country_brewery_total"))
-                .otherwise(F.lit(0.0))
-            )
-        )
-
-        w = Window.partitionBy("ingestion_date", "country").orderBy(F.col("brewery_count").desc())
-
-        ranked = (
-            enriched
-            .withColumn("rank_state_in_country", F.row_number().over(w))
-            .filter(F.col("rank_state_in_country") <= F.lit(self.TOP_N))
+            .orderBy(desc("num_breweries"))
             .withColumn("created_at_utc", F.current_timestamp())
         )
-
-        logger.info("Gold transformation finished successfully")
-        return ranked
