@@ -18,7 +18,7 @@ SILVER_FORMAT = "parquet"
 GOLD_FORMAT   = "parquet"
 
 # ========= PARTIÇÕES =========
-SILVER_PARTITIONS = ["ingestion_date", "country"]
+SILVER_PARTITIONS = ["ingestion_date", "country", "state"]
 GOLD_PARTITIONS   = ["ingestion_date", "country"]
 BRONZE_PARTITION_KEY = "ingestion_date"
 

@@ -18,6 +18,8 @@ DEFAULT_ARGS = {
     "owner": "lais marques",
     "retry_delay": timedelta(minutes=5),
     "retries": 2,
+    "email_on_failure": True,
+    "email": ["lais.teles@hotmail.com"]
 }
 
 def run_stage(stage: str, execution_dt: str):
