@@ -58,7 +58,7 @@ class BreweryGoldTransformer:
 
         ranked = (
             enriched
-            .withColumn("rank_state_in_country", F.dense_rank().over(w))
+            .withColumn("rank_state_in_country", F.row_number().over(w))
             .filter(F.col("rank_state_in_country") <= F.lit(self.TOP_N))
             .withColumn("created_at_utc", F.current_timestamp())
         )

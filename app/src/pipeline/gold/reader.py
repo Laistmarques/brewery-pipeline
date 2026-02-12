@@ -37,9 +37,11 @@ class SilverBreweriesReader:
             execution_date,
             self.silver_dir,
         )
-        path = f"{self.silver_dir}/ingestion_date={execution_date}"
 
-        df = spark.read.parquet(path)
+        silver_df = (
+            spark.read.parquet(self.silver_dir)
+            .filter(F.col("ingestion_date") == execution_date)
+        )
 
         logger.info("Silver read finished successfully")
-        return df
+        return silver_df
