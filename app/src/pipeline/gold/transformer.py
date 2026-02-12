@@ -34,16 +34,16 @@ class BreweryGoldTransformer:
         return (
             df
             .groupBy(
-                col("brewery_type"),
-                col("country"),
-                col("state_province"),
-                col("city"),
+                F.col("brewery_type"),
+                F.col("country"),
+                F.col("state"),
+                F.col("city"),
             )
             .agg(
                 # Quantidade de cervejarias únicas por (date, country, state, brewery_type)
                 F.countDistinct("id").alias("num_breweries"),
                 F.countDistinct("city").alias("num_city"),
             )
-            .orderBy(desc("num_breweries"))
+            .orderBy(F.desc("num_breweries"))
             .withColumn("created_at_utc", F.current_timestamp())
         )
