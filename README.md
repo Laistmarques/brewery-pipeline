@@ -129,7 +129,49 @@ docker compose up --build
 
 Acesse: http://localhost:8080
 
-Ative e execute o DAG `brewery_pipeline_dag`.
+Credenciais padrão:
+- Usuário: `airflow`
+- Senha: `airflow`
+
+Passos:
+1. Despausar a DAG `brewery_pipeline_dag`
+2. Executar manualmente ou aguardar o agendamento automático
+
+------------------------------------------------------------------------
+## 🔄 Scheduling, Retries e Tratamento de Erros
+
+A DAG foi configurada com:
+
+- Execução diária
+- 3 retries automáticos em caso de falha
+- Retry delay de 5 minutos
+- Timeout por task
+- Separação clara de etapas: Bronze → Silver → Gold
+
+Tratamento implementado:
+- Controle de erros HTTP (429 / 5xx)
+- Paginação completa da API
+- Logs estruturados
+- Pipeline idempotente baseado em `ingestion_date`
+
+------------------------------------------------------------------------
+
+## 📂 Estrutura Física de Saída
+
+### Bronze
+```
+data/bronze/ingestion_date=YYYY-MM-DD/*.json
+```
+
+### Silver
+```
+data/silver/ingestion_date=YYYY-MM-DD/country=XX/state=YY/*.parquet
+```
+
+### Gold
+```
+data/gold/ingestion_date=YYYY-MM-DD/country=XX/*.parquet
+```
 
 ------------------------------------------------------------------------
 
@@ -148,7 +190,7 @@ python -m src.pipeline.main --stage gold --date 2026-02-11
 ``` bash
 pytest --cov=src --cov-report=term-missing
 ```
-Inclui: 
+Cobertura inclui:
 - Testes unitários de transformers 
 - Testes de jobs com mocks 
 - Testes de integração de writers 
