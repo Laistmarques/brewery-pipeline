@@ -28,6 +28,7 @@ class BreweryGoldTransformer:
     """
 
     def transform(self, df: DataFrame) -> DataFrame:
+
         logger.info("Starting Gold transformation (states ranking)")
 
         return (
