@@ -149,11 +149,10 @@ O pipeline é dividido em três camadas:
 -   Armazenado em Parquet.
 -   Particionado por `ingestion_date` e `country`.
 
+---
 ## ⚖️ Decisões Técnicas e Arquiteturais
 
 Nesta seção explico as principais decisões técnicas adotadas no projeto.
-
----
 
 ### 🗂️ Uso do Parquet
 
