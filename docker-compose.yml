@@ -12,18 +12,16 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
     AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/logs
-    PYTHONPATH: "/app/src:/app"
     AIRFLOW__LOGGING__LOG_FORMAT: "[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
     AIRFLOW__CORE__UNIT_TESTING_MODE: "False"
     AIRFLOW__LOGGING__LOG_LEVEL: "INFO"
+    PYTHONPATH: "/src"
     JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-
   volumes:
     - ./airflow/dags:/opt/airflow/dags:ro
-    - ./app:/app
-    - airflow_logs:/opt/airflow/logs
-    - airflow_data:/opt/airflow/data
+    - ./src:/src
     - airflow_app_data:/app/data
+    - airflow_logs:/opt/airflow/logs
   depends_on:
     postgres:
       condition: service_healthy
@@ -71,5 +69,5 @@ services:
 volumes:
   postgres-db-volume:
   airflow_logs:
-  airflow_data:
   airflow_app_data:
+

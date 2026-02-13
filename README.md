@@ -127,8 +127,8 @@ O pipeline é dividido em três camadas:
 ``` bash
 brewery-pipeline/
 │
-├── app/
-│   ├── src/pipeline/
+├── src/
+│   ├── pipeline/
 │   │   ├── bronze/
 │   │   ├── silver/
 │   │   ├── gold/
@@ -156,8 +156,8 @@ docker compose up --build
 Acesse: http://localhost:8080
 
 Credenciais padrão:
-- Usuário: `airflow`
-- Senha: `airflow`
+- Usuário: `admin`
+- Senha: `admin`
 
 Passos:
 1. Despausar a DAG `brewery_pipeline_dag`
@@ -171,9 +171,8 @@ A DAG foi configurada com:
 - Execução diária
 - 2 retries automáticos em caso de falha
 - Retry delay de 5 minutos
-- Timeout por task
+- Timeout de 30 min por task
 - Separação clara de etapas: Bronze → Silver → Gold
-- Timeout de 30min 
 
 Tratamento implementado:
 - Controle de erros HTTP (429 / 5xx)
@@ -205,9 +204,9 @@ data/gold/ingestion_date=YYYY-MM-DD/country=XX/*.parquet
 ## 🖥 Execução Local
 
 ``` bash
-python -m src.pipeline.main --stage bronze --date 2026-02-11
-python -m src.pipeline.main --stage silver --date 2026-02-11
-python -m src.pipeline.main --stage gold --date 2026-02-11
+python -m pipeline.main --stage bronze --date 2026-02-11
+python -m pipeline.main --stage silver --date 2026-02-11
+python -m pipeline.main --stage gold --date 2026-02-11
 ```
 
 ------------------------------------------------------------------------
@@ -215,7 +214,7 @@ python -m src.pipeline.main --stage gold --date 2026-02-11
 ## 🧪 Testes
 
 ``` bash
-pytest --cov=src --cov-report=term-missing
+pytest --cov=pipeline --cov-report=term-missing
 ```
 Cobertura inclui:
 - Testes unitários de transformers 

@@ -9,8 +9,8 @@ from airflow.utils.task_group import TaskGroup
 from airflow.exceptions import AirflowFailException
 from airflow.operators.python import ShortCircuitOperator
 
-from src.pipeline.core.config import BRONZE_DIR, BRONZE_PARTITION_KEY, BREWERIES_DATASET
-from src.pipeline.core.logging import get_logger
+from pipeline.core.config import BRONZE_DIR, BRONZE_PARTITION_KEY, BREWERIES_DATASET
+from pipeline.core.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -18,21 +18,21 @@ DEFAULT_ARGS = {
     "owner": "lais marques",
     "retry_delay": timedelta(minutes=5),
     "retries": 2,
-    "email_on_failure": True,
+    "email_on_failure": False,
     "email": ["lais.teles@hotmail.com"],
     "execution_timeout": timedelta(minutes=30),
 }
 
 def run_stage(stage: str, execution_dt: str):
     """
-    Executa seu entrypoint (src.pipeline.main) como subprocess.
+    Executa seu entrypoint (pipeline.main) como subprocess.
     A DAG orquestra; o pipeline executa fora do contexto do Airflow.
     """
 
     command = [
         "python", 
         "-m", 
-        "src.pipeline.main", 
+        "pipeline.main", 
         "--stage", stage, 
         "--date", execution_dt
     ]
@@ -41,7 +41,7 @@ def run_stage(stage: str, execution_dt: str):
 
     r = subprocess.run(
         command, 
-        cwd="/app",
+        cwd="/",
         capture_output=True, 
         text=True
     )
