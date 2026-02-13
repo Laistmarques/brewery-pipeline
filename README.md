@@ -368,7 +368,7 @@ Além do pipeline “rodar”, garantir que os dados fazem sentido:
 - **Checks de unicidade**: `id` único por dia/localidade (ou ao menos monitorar duplicidade).
 - **Checks de consistência**: `brewery_count` >= 0, `city_count` <= `brewery_count`, etc.
 - **Checks de freshness**: garantir que existe partição `ingestion_date=YYYY-MM-DD` para o dia esperado.
-- Ferramentas recomendadas: **Great Expectations** ou **Soda** (com relatórios por execução).
+
 
 #### 4) Ambiente e performance (Spark)
 - Separar configurações por ambiente (dev/staging/prod)
