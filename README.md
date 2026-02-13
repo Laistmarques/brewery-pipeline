@@ -1,13 +1,32 @@
 # Brewery Data Pipeline 🍺
 
+## 📌 Contexto do Desafio
+
+O desafio consistiu em construir uma pipeline de dados a partir da API pública Open Brewery DB, garantindo:
+
+- Organização em camadas
+
+- Reprocessamento por data
+
+- Separação clara de responsabilidades
+
+- Estrutura preparada para evolução futura
+
+A solução foi implementada utilizando Python, PySpark, Apache Airflow e Docker, seguindo o padrão Medallion Architecture (Bronze → Silver → Gold).
+
 ## 📌 Visão Geral
 
-Este projeto implementa uma pipeline de dados que segue a arquitetura
-**Medallion (Bronze → Silver → Gold)** utilizando **Python, PySpark,
-Apache Airflow e Docker**.
+A pipeline realiza:
 
-O objetivo é consumir dados da API pública Open Brewery DB, processá-los
-e gerar uma camada analítica agregada pronta para consultas.
+- Extração paginada da API
+
+- Armazenamento bruto (Bronze)
+
+- Padronização e limpeza (Silver)
+
+- Agregação analítica (Gold)
+
+O resultado final é uma camada analítica pronta para consumo.
 
 ------------------------------------------------------------------------
 
@@ -93,6 +112,16 @@ pip install -r requirements.txt
 +-------------------------------+
 ```
 
+A arquitetura foi projetada para garantir:
+
+- Separação clara entre ingestão, transformação e agregação
+
+- Idempotência por data
+
+- Reprocessamento seguro
+
+- Evolução futura para Data Lake ou storage cloud
+
 O pipeline é dividido em três camadas:
 
 ### 🥉 Bronze --- Ingestão
@@ -120,7 +149,7 @@ O pipeline é dividido em três camadas:
 -   Armazenado em Parquet.
 -   Particionado por `ingestion_date` e `country`.
 
-## ⚖️ Decisões Arquiteturais
+## ⚖️ Decisões Técnicas e Arquiteturais
 
 Nesta seção explico as principais decisões técnicas adotadas no projeto.
 
@@ -128,22 +157,37 @@ Nesta seção explico as principais decisões técnicas adotadas no projeto.
 
 ### 🗂️ Uso do Parquet
 
-Optei por utilizar **Parquet** nas camadas Silver e Gold porque é um formato colunar, eficiente para consultas analíticas e totalmente integrado ao Spark.
+Optei por utilizar **Parquet** nas camadas Silver e Gold por ser um formato colunar, eficiente para consultas analíticas e totalmente integrado ao Spark.
 
-Para este case, Parquet é suficiente, mantém a solução simples e performática.
+Mantém simplicidade e performance adequadas ao escopo do case.
 
 ---
 
-### 🧱 Particionamento por `ingestion_date`, `country` e `state`
+🧱 Estratégia de Particionamento
 
-A camada Silver é particionada por data de ingestão e localização.
+A Silver é particionada por:
 
-Essa escolha:
-- Melhora performance (partition pruning)
-- Permite reprocessamento por data
-- Organiza melhor os dados para consultas analíticas
+- ingestion_date
 
-É um equilíbrio entre performance e simplicidade.
+- country
+
+- state
+
+A Gold é particionada por:
+
+- ingestion_date
+
+- country
+
+Essa estratégia:
+
+- Permite partition pruning
+
+- Facilita reprocessamento por data
+
+- Mantém organização lógica dos dados
+
+- Evita sobrescrita completa do dataset
 
 ---
 
@@ -158,11 +202,19 @@ Isso garante:
 
 ---
 
-### ⚙️ Airflow com LocalExecutor
+### ⚙️ Orquestração com Airflow (LocalExecutor)
 
-Escolhi o LocalExecutor por ser simples, suportar paralelismo e ser adequado ao escopo do projeto.
+O Airflow foi utilizado para:
 
-Para ambientes maiores, poderia evoluir para KubernetesExecutor.
+- Definir dependências Bronze → Silver → Gold
+
+- Configurar retries automáticos
+
+- Controlar timeout por task
+
+- Monitorar execuções
+
+O LocalExecutor foi escolhido por ser suficiente para o escopo do projeto, mantendo simplicidade e paralelismo básico.
 
 ---
 
@@ -172,16 +224,6 @@ Executar Spark dentro do Docker garante:
 - Reprodutibilidade
 - Ambiente consistente
 - Facilidade para avaliação do projeto
-
----
-
-### 🏛️ Arquitetura Medallion
-
-A separação Bronze → Silver → Gold foi adotada para:
-
-- Separar responsabilidades
-- Melhorar qualidade gradualmente
-- Facilitar auditoria e reprocessamento
 
 ------------------------------------------------------------------------
 
@@ -349,14 +391,26 @@ Além do pipeline “rodar”, garantir que os dados fazem sentido:
 
 ## 🚀 Evoluções Futuras
 
--   Integração com Delta Lake
--   Data Quality framework
--   CI/CD
--   Deploy em Cloud
+1. Data Quality automatizado
+2. Armazenamento transacional (Delta Lake)
+3. Deploy em ambiente cloud
+4. CI/CD
+
 
 ------------------------------------------------------------------------
 
 ## 🏁 Conclusão
 
-Projeto estruturado seguindo boas práticas de engenharia de dados, com
-arquitetura clara, testes automatizados e ambiente reproduzível.
+A solução foi construída priorizando:
+
+- Clareza arquitetural
+
+- Idempotência
+
+- Reprocessamento seguro
+
+- Organização analítica
+
+- Ambiente reproduzível
+
+Mantém simplicidade adequada ao escopo do case, mas já estruturada para evoluções futuras em ambiente produtivo.

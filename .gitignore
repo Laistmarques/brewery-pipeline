@@ -1,29 +1,45 @@
+# ==============================
 # Python
+# ==============================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.egg-info/
-
-# Virtualenv
 .venv/
 venv/
+env/
 
-# Airflow
-airflow/logs/
+# ==============================
+# Spark / Data Outputs
+# ==============================
+data/
+**/*.parquet
+**/*.json
+**/*.crc
+**/_SUCCESS
+
+# ==============================
+# Logs
+# ==============================
+logs/
 *.log
 
-# Data
-app/data/
-opt/airflow/data/
+# ==============================
+# Airflow
+# ==============================
+airflow.db
+airflow-webserver.pid
 
-# Spark
-metastore_db/
-spark-warehouse/
-
-# Docker
-.env
-
-# OS
+# ==============================
+# IDE / OS
+# ==============================
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
+
+# ==============================
+# Docker
+# ==============================
+.env
