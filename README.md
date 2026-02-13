@@ -120,6 +120,69 @@ O pipeline é dividido em três camadas:
 -   Armazenado em Parquet.
 -   Particionado por `ingestion_date` e `country`.
 
+## ⚖️ Decisões Arquiteturais
+
+Nesta seção explico as principais decisões técnicas adotadas no projeto.
+
+---
+
+### 🗂️ Uso do Parquet
+
+Optei por utilizar **Parquet** nas camadas Silver e Gold porque é um formato colunar, eficiente para consultas analíticas e totalmente integrado ao Spark.
+
+Para este case, Parquet é suficiente, mantém a solução simples e performática.
+
+---
+
+### 🧱 Particionamento por `ingestion_date`, `country` e `state`
+
+A camada Silver é particionada por data de ingestão e localização.
+
+Essa escolha:
+- Melhora performance (partition pruning)
+- Permite reprocessamento por data
+- Organiza melhor os dados para consultas analíticas
+
+É um equilíbrio entre performance e simplicidade.
+
+---
+
+### 🔁 Overwrite por partição (e não total)
+
+Implementei sobrescrita dinâmica de partição para permitir reprocessamento de datas específicas sem apagar histórico.
+
+Isso garante:
+- Idempotência
+- Segurança no reprocessamento
+- Preservação das demais partições
+
+---
+
+### ⚙️ Airflow com LocalExecutor
+
+Escolhi o LocalExecutor por ser simples, suportar paralelismo e ser adequado ao escopo do projeto.
+
+Para ambientes maiores, poderia evoluir para KubernetesExecutor.
+
+---
+
+### 🐳 Spark containerizado
+
+Executar Spark dentro do Docker garante:
+- Reprodutibilidade
+- Ambiente consistente
+- Facilidade para avaliação do projeto
+
+---
+
+### 🏛️ Arquitetura Medallion
+
+A separação Bronze → Silver → Gold foi adotada para:
+
+- Separar responsabilidades
+- Melhorar qualidade gradualmente
+- Facilitar auditoria e reprocessamento
+
 ------------------------------------------------------------------------
 
 ## 📂 Estrutura do Projeto
